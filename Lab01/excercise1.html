@@ -103,25 +103,48 @@
         trianglesMesh.forEach((mesh) => scene.add(mesh));
         scene.add(trunkMesh);
 
-        // Square
-        var squareGeometry = new THREE.Geometry();
-        squareGeometry.vertices.push(new THREE.Vector3(-1.0, 1.0, 0.0));
-        squareGeometry.vertices.push(new THREE.Vector3(1.0, 1.0, 0.0));
-        squareGeometry.vertices.push(new THREE.Vector3(1.0, -1.0, 0.0));
-        squareGeometry.vertices.push(new THREE.Vector3(-1.0, -1.0, 0.0));
-        squareGeometry.faces.push(new THREE.Face3(0, 1, 2));
-        squareGeometry.faces.push(new THREE.Face3(0, 2, 3));
+        // Gregory House
+        let houseColor = 0x8080;
+        let housePosition = { x: 1.5, y: -1.0, z: 4.0 };
 
-        // Color Square
-        var squareMaterial = new THREE.MeshBasicMaterial({
-          color: 0xaffbf,
+        let roofColor = 0x818589;
+        let roofPosition = { x: 1.5, y: 1.0, z: 4.0 };
+
+        // -- Geometry
+        var houseGeometry = new THREE.Geometry();
+        houseGeometry.vertices.push(new THREE.Vector3(-1.0, 1.0, 0.0));
+        houseGeometry.vertices.push(new THREE.Vector3(1.0, 1.0, 0.0));
+        houseGeometry.vertices.push(new THREE.Vector3(1.0, -1.0, 0.0));
+        houseGeometry.vertices.push(new THREE.Vector3(-1.0, -1.0, 0.0));
+        houseGeometry.faces.push(new THREE.Face3(0, 1, 2));
+        houseGeometry.faces.push(new THREE.Face3(0, 2, 3));
+
+        var roofGeometry = new THREE.Geometry();
+        roofGeometry.vertices.push(new THREE.Vector3(0.0, 1.0, 0.0));
+        roofGeometry.vertices.push(new THREE.Vector3(-1.0, -1.0, 0.0));
+        roofGeometry.vertices.push(new THREE.Vector3(1.0, -1.0, 0.0));
+        roofGeometry.faces.push(new THREE.Face3(0, 1, 2));
+
+        // -- Color
+        var houseMaterial = new THREE.MeshBasicMaterial({
+          color: houseColor,
           side: THREE.DoubleSide,
         });
 
-        // Positioning Square
-        var squareMesh = new THREE.Mesh(squareGeometry, squareMaterial);
-        squareMesh.position.set(1.5, 0.0, 4.0);
-        scene.add(squareMesh);
+        var roofMaterial = new THREE.MeshBasicMaterial({
+          color: roofColor,
+          side: THREE.DoubleSide,
+        });
+
+        // -- Positioning
+        var houseMesh = new THREE.Mesh(houseGeometry, houseMaterial);
+        houseMesh.position.set(...Object.values(housePosition));
+
+        var roofMesh = new THREE.Mesh(roofGeometry, roofMaterial);
+        roofMesh.position.set(...Object.values(roofPosition));
+
+        scene.add(houseMesh);
+        scene.add(roofMesh);
       }
 
       function renderScene() {
