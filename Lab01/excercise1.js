@@ -1,10 +1,11 @@
 var scene;
 var camera;
+var pyramidGeometry;
 
 function buildChristmassTree(
-  posX,
-  posY,
-  posZ,
+  posX = -2,
+  posY = 0,
+  posZ = 0,
   leafsColor = 0x00ff00,
   trunkColor = 0x964b00
 ) {
@@ -65,6 +66,17 @@ function buildChristmassTree(
   treeGroup.position.set(posX, posY, posZ);
 
   return treeGroup;
+}
+
+function build3DChristmassTree() {
+  pyramidGeometry = new THREE.CylinderGeometry(0.0, 1.5, 1.5, 4, false);
+  let material = new THREE.MeshBasicMaterial({
+    color: 0xffff00,
+    side: THREE.DoubleSide,
+  });
+  let cylinderMesh = new THREE.Mesh(pyramidGeometry, material);
+  cylinderMesh.position.set(-1.5, 0.0, 4.0);
+  scene.add(cylinderMesh);
 }
 
 function buildGregoryHouse() {
@@ -199,21 +211,37 @@ function initializeScene() {
   scene.add(camera);
 
   // Christmass Trees
-  var treesGroup = new THREE.Group();
-  treesGroup.add(buildChristmassTree(-2, 0, 0, 0x00fc00, 0x964b00));
-  treesGroup.add(buildChristmassTree(-4.3, 0, 1, 0x00fc00, 0x964a00));
-  treesGroup.add(buildChristmassTree(-0.7, 1.5, -0.1, 0x3c5700, 0x964a00));
-  treesGroup.add(buildChristmassTree(-3.5, 1.5, -0.1, 0x3c5700, 0x964a00));
-  treesGroup.position.set(0, 0, -2);
-  scene.add(treesGroup);
-
+  // var treesGroup = new THREE.Group();
+  // treesGroup.add(buildChristmassTree(-2, 0, 0, 0x00fc00, 0x964b00));
+  // treesGroup.add(buildChristmassTree(-4.3, 0, 1, 0x00fc00, 0x964a00));
+  // treesGroup.add(buildChristmassTree(-0.7, 1.5, -0.1, 0x3c5700, 0x964a00));
+  // treesGroup.add(buildChristmassTree(-3.5, 1.5, -0.1, 0x3c5700, 0x964a00));
+  // treesGroup.position.set(0, 0, -2);
+  // scene.add(treesGroup);
+  // scene.add(buildChristmassTree());
+  build3DChristmassTree();
   // Gregory House
-  scene.add(buildGregoryHouse());
+  // scene.add(buildGregoryHouse());
 }
 
 function renderScene() {
   renderer.render(scene, camera);
 }
 
+function animateScene() {
+  // Increase the y rotation of the triangle
+  pyramidGeometry.rotation.y += 0.1;
+
+  requestAnimationFrame(animateScene);
+  // Decrease the rotation of the cube
+
+  // Define the function, which is called by the browser supported timer loop. If the
+  // browser tab is not visible, the animation is paused. So 'animateScene()' is called
+  // in a browser controlled loop.
+
+  // Map the 3D scene down to the 2D screen (render the frame)
+  renderScene();
+}
+
 initializeScene();
-renderScene();
+animateScene();

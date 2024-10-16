@@ -239,10 +239,10 @@
        */
       function animateScene() {
         // Increase the y rotation of the triangle
-        pyramidMesh.rotation.y += 0.1;
+        pyramidMesh.rotation.y += 0.01;
 
         // Decrease the rotation of the cube
-        cubeMesh.rotateOnAxis(new THREE.Vector3(1, 1, 1).normalize(), 0.075);
+        cubeMesh.rotateOnAxis(new THREE.Vector3(1, 1, 1).normalize(), 0.00075);
 
         // Define the function, which is called by the browser supported timer loop. If the
         // browser tab is not visible, the animation is paused. So 'animateScene()' is called

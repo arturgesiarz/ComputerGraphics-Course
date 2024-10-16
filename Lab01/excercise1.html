@@ -16,9 +16,99 @@
       }
     </style>
     <script src="three.js"></script>
-    <script src="excercise1.js" defer></script>
+    <script src="Detector.js"></script>
   </head>
   <body>
     <div id="WebGLCanvas"></div>
+    <script>
+      var scene;
+      var camera;
+      var christmassTree;
+      var gregoryHouse;
+      var car;
+
+      initializeScene();
+      animateScene();
+
+      function buildChristmassTree() {
+        var tree = new THREE.Group();
+
+        // Trunk
+        var trunkGeometry = new THREE.CylinderGeometry(0.0, 1.5, 1.5, 4, false);
+        var trunkMaterial = new THREE.MeshBasicMaterial({
+          color: 0x343234,
+          side: THREE.DoubleSide,
+        });
+        var trunkMesh = new THREE.Mesh(trunkGeometry, trunkMaterial);
+        trunkMesh.position.set(0, -2, 0);
+        tree.add(trunkMesh);
+
+        // Leafs
+        var leafsGeometry = new THREE.ConeGeometry(3, 5, 8);
+        var leafsMaterial = new THREE.MeshBasicMaterial({
+          color: 0x3c5700,
+          side: THREE.DoubleSide,
+        });
+
+        // Leafs Edges
+        var leafsEdges = new THREE.EdgesGeometry(leafsGeometry);
+        var leafsLineMaterial = new THREE.LineBasicMaterial({
+          color: 0x000000,
+        });
+        var leafsWireframe = new THREE.LineSegments(
+          leafsEdges,
+          leafsLineMaterial
+        );
+
+        var leafsMesh = new THREE.Mesh(leafsGeometry, leafsMaterial);
+        leafsMesh.add(leafsWireframe);
+        leafsMesh.position.set(0, 2, 0);
+        tree.add(leafsMesh);
+
+        christmassTree = leafsMesh;
+
+        scene.add(tree);
+      }
+
+      function initializeScene() {
+        if (Detector.webgl) {
+          renderer = new THREE.WebGLRenderer({ antialias: true });
+        } else {
+          renderer = new THREE.CanvasRenderer();
+        }
+        renderer.setClearColor(0x34b7eb, 1);
+
+        canvasWidth = window.innerWidth;
+        canvasHeight = window.innerHeight;
+
+        renderer.setSize(canvasWidth, canvasHeight);
+        document.getElementById("WebGLCanvas").appendChild(renderer.domElement);
+
+        scene = new THREE.Scene();
+        camera = new THREE.PerspectiveCamera(
+          45,
+          canvasWidth / canvasHeight,
+          1,
+          100
+        );
+        camera.position.set(0, 0, 15);
+        camera.lookAt(scene.position);
+        scene.add(camera);
+
+        buildChristmassTree();
+        // scene.add(christmassTree);
+      }
+
+      function animateScene() {
+        christmassTree.rotation.y += 0.01;
+
+        requestAnimationFrame(animateScene);
+        renderScene();
+      }
+
+      function renderScene() {
+        renderer.render(scene, camera);
+      }
+    </script>
   </body>
 </html>
