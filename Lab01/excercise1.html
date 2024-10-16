@@ -34,38 +34,72 @@
         var tree = new THREE.Group();
 
         // Trunk
-        var trunkGeometry = new THREE.CylinderGeometry(0.0, 1.5, 1.5, 4, false);
+        var trunkGeometry = new THREE.CylinderGeometry(0.5, 0.5, 1.5, 20);
         var trunkMaterial = new THREE.MeshBasicMaterial({
-          color: 0x343234,
+          color: 0x5e3d04,
           side: THREE.DoubleSide,
         });
         var trunkMesh = new THREE.Mesh(trunkGeometry, trunkMaterial);
-        trunkMesh.position.set(0, -2, 0);
-        tree.add(trunkMesh);
 
-        // Leafs
-        var leafsGeometry = new THREE.ConeGeometry(3, 5, 8);
+        // Leafs - Geometry
+        var leafs = new THREE.Group();
+
+        var leafs1Geometry = new THREE.ConeGeometry(2, 5, 8);
+        var leafs2Geometry = new THREE.ConeGeometry(2, 5, 8);
+        var leafs3Geometry = new THREE.ConeGeometry(2, 5, 8);
+
+        // Leafs - Edges
+        var leafs1Edges = new THREE.EdgesGeometry(leafs1Geometry);
+        var leafs2Edges = new THREE.EdgesGeometry(leafs2Geometry);
+        var leafs3Edges = new THREE.EdgesGeometry(leafs3Geometry);
+
+        var leafsLineMaterial = new THREE.LineBasicMaterial({
+          color: 0x000000,
+        });
+
+        var leafs1Wireframe = new THREE.LineSegments(
+          leafs1Edges,
+          leafsLineMaterial
+        );
+        var leafs2Wireframe = new THREE.LineSegments(
+          leafs2Edges,
+          leafsLineMaterial
+        );
+        var leafs3Wireframe = new THREE.LineSegments(
+          leafs3Edges,
+          leafsLineMaterial
+        );
+
+        // Leafs - Material
         var leafsMaterial = new THREE.MeshBasicMaterial({
           color: 0x3c5700,
           side: THREE.DoubleSide,
         });
 
-        // Leafs Edges
-        var leafsEdges = new THREE.EdgesGeometry(leafsGeometry);
-        var leafsLineMaterial = new THREE.LineBasicMaterial({
-          color: 0x000000,
-        });
-        var leafsWireframe = new THREE.LineSegments(
-          leafsEdges,
-          leafsLineMaterial
-        );
+        // Leafs - Mesh
+        var leafs1Mesh = new THREE.Mesh(leafs1Geometry, leafsMaterial);
+        leafs1Mesh.add(leafs1Wireframe);
+        leafs1Mesh.position.set(0, 2, 0);
 
-        var leafsMesh = new THREE.Mesh(leafsGeometry, leafsMaterial);
-        leafsMesh.add(leafsWireframe);
-        leafsMesh.position.set(0, 2, 0);
-        tree.add(leafsMesh);
+        var leafs2Mesh = new THREE.Mesh(leafs2Geometry, leafsMaterial);
+        leafs2Mesh.add(leafs2Wireframe);
+        leafs2Mesh.position.set(0, 4, 0);
 
-        christmassTree = leafsMesh;
+        var leafs3Mesh = new THREE.Mesh(leafs3Geometry, leafsMaterial);
+        leafs3Mesh.add(leafs3Wireframe);
+        leafs3Mesh.position.set(0, 6, 0);
+
+        leafs.add(leafs1Mesh);
+        leafs.add(leafs2Mesh);
+        leafs.add(leafs3Mesh);
+
+        leafs.position.set(-4, -3, 0);
+        trunkMesh.position.set(-4, -4, 0);
+
+        tree.add(leafs);
+        tree.add(trunkMesh);
+
+        christmassTree = leafs;
 
         scene.add(tree);
       }
