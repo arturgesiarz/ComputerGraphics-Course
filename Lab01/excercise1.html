@@ -44,7 +44,7 @@
           1,
           100
         );
-        camera.position.set(0, 0, 10);
+        camera.position.set(0, 5, 10);
         camera.lookAt(scene.position);
         scene.add(camera);
 
@@ -63,7 +63,7 @@
 
         // Positioning Trangle
         var triangleMesh = new THREE.Mesh(triangleGeometry, triangleMaterial);
-        triangleMesh.position.set(-1.5, 0.0, 4.0);
+        triangleMesh.position.set(-1.2, 0.0, -1.0);
         scene.add(triangleMesh);
 
         // Square
@@ -83,7 +83,7 @@
 
         // Positioning Square
         var squareMesh = new THREE.Mesh(squareGeometry, squareMaterial);
-        squareMesh.position.set(1.5, 0.0, 4.0);
+        squareMesh.position.set(1.5, 0.0, 2.0);
         scene.add(squareMesh);
       }
 
