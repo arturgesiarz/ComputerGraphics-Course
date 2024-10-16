@@ -99,9 +99,47 @@
         tree.add(leafs);
         tree.add(trunkMesh);
 
+        tree.position.set(-2, 1, -4);
+
         christmassTree = leafs;
 
         scene.add(tree);
+      }
+
+      function buildGregoryHouse() {
+        var house = new THREE.Group();
+
+        // Block
+        var blockGeometry = new THREE.CubeGeometry(3, 3, 3);
+        var blockMaterials = [
+          new THREE.MeshBasicMaterial({ color: 0x808380 }),
+          new THREE.MeshBasicMaterial({ color: 0x808080 }),
+          new THREE.MeshBasicMaterial({ color: 0x808380 }),
+          new THREE.MeshBasicMaterial({ color: 0x808080 }),
+          new THREE.MeshBasicMaterial({ color: 0x8ab080 }),
+          new THREE.MeshBasicMaterial({ color: 0x808080 }),
+        ];
+        var blockMaterial = new THREE.MeshFaceMaterial(blockMaterials);
+        var blockLineMaterial = new THREE.LineBasicMaterial({
+          color: 0x000000,
+        });
+        var blockEdges = new THREE.EdgesGeometry(blockGeometry);
+        var blockWireframe = new THREE.LineSegments(
+          blockEdges,
+          blockLineMaterial
+        );
+        var blockMesh = new THREE.Mesh(blockGeometry, blockMaterial);
+        blockMesh.add(blockWireframe);
+        blockMesh.position.set(4, -0.5, 4.0);
+
+        // Roof
+        // todo
+
+        scene.add(blockMesh);
+      }
+
+      function buildCar() {
+        // todo
       }
 
       function initializeScene() {
@@ -130,11 +168,13 @@
         scene.add(camera);
 
         buildChristmassTree();
-        // scene.add(christmassTree);
+        buildGregoryHouse();
+        buildCar();
       }
 
       function animateScene() {
         christmassTree.rotation.y += 0.01;
+        // cat.rotation.y += 0.01; // todo
 
         requestAnimationFrame(animateScene);
         renderScene();
