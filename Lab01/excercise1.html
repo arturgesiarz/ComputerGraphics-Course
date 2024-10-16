@@ -44,27 +44,64 @@
           1,
           100
         );
-        camera.position.set(0, 5, 10);
+        camera.position.set(0, 0, 15);
         camera.lookAt(scene.position);
         scene.add(camera);
 
-        // Triangle
-        var triangleGeometry = new THREE.Geometry();
-        triangleGeometry.vertices.push(new THREE.Vector3(0.0, 1.0, 0.0));
-        triangleGeometry.vertices.push(new THREE.Vector3(-1.0, -1.0, 0.0));
-        triangleGeometry.vertices.push(new THREE.Vector3(1.0, -1.0, 0.0));
-        triangleGeometry.faces.push(new THREE.Face3(0, 1, 2));
+        // Christmass Tree
+        let leafsColor = 0x00ff00;
+        let leafsPositions = [
+          { x: -1.5, y: 0.0, z: 4.0 },
+          { x: -1.5, y: 1.0, z: 4.0 },
+          { x: -1.5, y: 2.0, z: 4.0 },
+        ];
 
-        // Color Triangle
+        let trunkColor = 0x964b00;
+        let trunkPosition = { x: -2, y: -2.0, z: 4.0 };
+
+        // -- Geometry
+        var trianglesGeometry = Array(3)
+          .fill(null)
+          .map(() => new THREE.Geometry());
+
+        trianglesGeometry.forEach((geometry, index) => {
+          geometry.vertices.push(new THREE.Vector3(0.0, 1.0, 0.0));
+          geometry.vertices.push(new THREE.Vector3(-1.0, -1.0, 0.0));
+          geometry.vertices.push(new THREE.Vector3(1.0, -1.0, 0.0));
+          geometry.faces.push(new THREE.Face3(0, 1, 2));
+        });
+
+        var trunkGeometry = new THREE.Geometry();
+        trunkGeometry.vertices.push(new THREE.Vector3(0.0, 1.0, 0.0));
+        trunkGeometry.vertices.push(new THREE.Vector3(1.0, 1.0, 0.0));
+        trunkGeometry.vertices.push(new THREE.Vector3(0.0, 0.0, 0.0));
+        trunkGeometry.vertices.push(new THREE.Vector3(1.0, 0.0, 0.0));
+        trunkGeometry.faces.push(new THREE.Face3(0, 1, 3));
+        trunkGeometry.faces.push(new THREE.Face3(0, 2, 3));
+
+        // -- Color
         var triangleMaterial = new THREE.MeshBasicMaterial({
-          color: 0xff324ff,
+          color: leafsColor,
           side: THREE.DoubleSide,
         });
 
-        // Positioning Trangle
-        var triangleMesh = new THREE.Mesh(triangleGeometry, triangleMaterial);
-        triangleMesh.position.set(-1.2, 0.0, -1.0);
-        scene.add(triangleMesh);
+        var trunkMaterial = new THREE.MeshBasicMaterial({
+          color: trunkColor,
+          side: THREE.DoubleSide,
+        });
+
+        // -- Positioning
+        var trianglesMesh = trianglesGeometry.map((geometry, index) => {
+          var mesh = new THREE.Mesh(geometry, triangleMaterial);
+          mesh.position.set(...Object.values(leafsPositions[index]));
+          return mesh;
+        });
+
+        var trunkMesh = new THREE.Mesh(trunkGeometry, trunkMaterial);
+        trunkMesh.position.set(...Object.values(trunkPosition));
+
+        trianglesMesh.forEach((mesh) => scene.add(mesh));
+        scene.add(trunkMesh);
 
         // Square
         var squareGeometry = new THREE.Geometry();
@@ -77,13 +114,13 @@
 
         // Color Square
         var squareMaterial = new THREE.MeshBasicMaterial({
-          color: 0xaffbfa,
+          color: 0xaffbf,
           side: THREE.DoubleSide,
         });
 
         // Positioning Square
         var squareMesh = new THREE.Mesh(squareGeometry, squareMaterial);
-        squareMesh.position.set(1.5, 0.0, 2.0);
+        squareMesh.position.set(1.5, 0.0, 4.0);
         scene.add(squareMesh);
       }
 
