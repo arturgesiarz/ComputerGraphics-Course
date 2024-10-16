@@ -1,18 +1,23 @@
 var scene;
 var camera;
 
-function buildChristmassTree() {
-  let leafsColor = 0x00ff00;
+function buildChristmassTree(
+  posX,
+  posY,
+  posZ,
+  leafsColor = 0x00ff00,
+  trunkColor = 0x964b00
+) {
+  // Props
   let leafsPositions = [
     { x: -1.5, y: 0.0, z: 4.0 },
     { x: -1.5, y: 1.0, z: 4.0 },
     { x: -1.5, y: 2.0, z: 4.0 },
   ];
 
-  let trunkColor = 0x964b00;
   let trunkPosition = { x: -2, y: -2.0, z: 4.0 };
 
-  // -- Geometry
+  // Geometry
   var trianglesGeometry = Array(3)
     .fill(null)
     .map(() => new THREE.Geometry());
@@ -32,7 +37,7 @@ function buildChristmassTree() {
   trunkGeometry.faces.push(new THREE.Face3(0, 1, 3));
   trunkGeometry.faces.push(new THREE.Face3(0, 2, 3));
 
-  // -- Color
+  // Color
   var triangleMaterial = new THREE.MeshBasicMaterial({
     color: leafsColor,
     side: THREE.DoubleSide,
@@ -43,7 +48,7 @@ function buildChristmassTree() {
     side: THREE.DoubleSide,
   });
 
-  // -- Positioning
+  // Positioning
   var trianglesMesh = trianglesGeometry.map((geometry, index) => {
     var mesh = new THREE.Mesh(geometry, triangleMaterial);
     mesh.position.set(...Object.values(leafsPositions[index]));
@@ -53,18 +58,31 @@ function buildChristmassTree() {
   var trunkMesh = new THREE.Mesh(trunkGeometry, trunkMaterial);
   trunkMesh.position.set(...Object.values(trunkPosition));
 
-  trianglesMesh.forEach((mesh) => scene.add(mesh));
-  scene.add(trunkMesh);
+  // Grouping
+  var treeGroup = new THREE.Group();
+  trianglesMesh.forEach((mesh) => treeGroup.add(mesh));
+  treeGroup.add(trunkMesh);
+  treeGroup.position.set(posX, posY, posZ);
+
+  return treeGroup;
 }
 
 function buildGregoryHouse() {
+  // Props
   let houseColor = 0x8080;
-  let housePosition = { x: 1.5, y: -1.0, z: 4.0 };
-
   let roofColor = 0x818589;
-  let roofPosition = { x: 1.5, y: 1.0, z: 4.0 };
+  let chimneyColor = 0x000000;
+  let doorsColor = chimneyColor;
+  let windowColor = 0x2c23cf;
 
-  // -- Geometry
+  let housePosition = { x: 1.5, y: -1.0, z: 4.0 };
+  let roofPosition = { x: 1.5, y: 1.0, z: 4.0 };
+  let chimneyPosition = { x: 1.3, y: 0.5, z: 3.9 };
+  let doorsPosition = { x: 1.0, y: -2, z: 4.0 };
+  let windowLeftPosition = { x: 0.75, y: -0.75, z: 4.0 };
+  let windowRightPosition = { x: 1.8, y: -0.75, z: 4.0 };
+
+  // Geometry
   var houseGeometry = new THREE.Geometry();
   houseGeometry.vertices.push(new THREE.Vector3(-1.0, 1.0, 0.0));
   houseGeometry.vertices.push(new THREE.Vector3(1.0, 1.0, 0.0));
@@ -79,7 +97,31 @@ function buildGregoryHouse() {
   roofGeometry.vertices.push(new THREE.Vector3(1.0, -1.0, 0.0));
   roofGeometry.faces.push(new THREE.Face3(0, 1, 2));
 
-  // -- Color
+  var chimneyGeometry = new THREE.Geometry();
+  chimneyGeometry.vertices.push(new THREE.Vector3(0.0, 1.0, 0.0));
+  chimneyGeometry.vertices.push(new THREE.Vector3(1.0, 1.0, 0.0));
+  chimneyGeometry.vertices.push(new THREE.Vector3(0.0, -0.5, 0.0));
+  chimneyGeometry.vertices.push(new THREE.Vector3(1.0, -0.5, 0.0));
+  chimneyGeometry.faces.push(new THREE.Face3(0, 1, 3));
+  chimneyGeometry.faces.push(new THREE.Face3(0, 2, 3));
+
+  var doorsGeometry = new THREE.Geometry();
+  doorsGeometry.vertices.push(new THREE.Vector3(0.0, 1, 0.0));
+  doorsGeometry.vertices.push(new THREE.Vector3(1.0, 1, 0.0));
+  doorsGeometry.vertices.push(new THREE.Vector3(0.0, 0, 0.0));
+  doorsGeometry.vertices.push(new THREE.Vector3(1.0, 0, 0.0));
+  doorsGeometry.faces.push(new THREE.Face3(0, 1, 3));
+  doorsGeometry.faces.push(new THREE.Face3(0, 2, 3));
+
+  var windowGeometry = new THREE.Geometry();
+  windowGeometry.vertices.push(new THREE.Vector3(0.0, 0.5, 0.0));
+  windowGeometry.vertices.push(new THREE.Vector3(0.5, 0.5, 0.0));
+  windowGeometry.vertices.push(new THREE.Vector3(0.0, 0, 0.0));
+  windowGeometry.vertices.push(new THREE.Vector3(0.5, 0, 0.0));
+  windowGeometry.faces.push(new THREE.Face3(0, 1, 3));
+  windowGeometry.faces.push(new THREE.Face3(0, 2, 3));
+
+  // Color
   var houseMaterial = new THREE.MeshBasicMaterial({
     color: houseColor,
     side: THREE.DoubleSide,
@@ -90,20 +132,59 @@ function buildGregoryHouse() {
     side: THREE.DoubleSide,
   });
 
-  // -- Positioning
+  var chimenyMaterial = new THREE.MeshBasicMaterial({
+    color: chimneyColor,
+    side: THREE.DoubleSide,
+  });
+
+  var doorsMaterial = new THREE.MeshBasicMaterial({
+    color: doorsColor,
+    side: THREE.DoubleSide,
+  });
+
+  var windowMaterial = new THREE.MeshBasicMaterial({
+    color: windowColor,
+    side: THREE.DoubleSide,
+  });
+
+  // Positioning
   var houseMesh = new THREE.Mesh(houseGeometry, houseMaterial);
   houseMesh.position.set(...Object.values(housePosition));
 
   var roofMesh = new THREE.Mesh(roofGeometry, roofMaterial);
   roofMesh.position.set(...Object.values(roofPosition));
 
-  scene.add(houseMesh);
-  scene.add(roofMesh);
+  var chimneyMesh = new THREE.Mesh(chimneyGeometry, chimenyMaterial);
+  chimneyMesh.position.set(...Object.values(chimneyPosition));
+
+  var doorsMesh = new THREE.Mesh(doorsGeometry, doorsMaterial);
+  doorsMesh.position.set(...Object.values(doorsPosition));
+
+  var windowLeftMesh = new THREE.Mesh(windowGeometry, windowMaterial);
+  windowLeftMesh.position.set(...Object.values(windowLeftPosition));
+
+  var windowRightMesh = new THREE.Mesh(windowGeometry, windowMaterial);
+  windowRightMesh.position.set(...Object.values(windowRightPosition));
+
+  // Grouping
+  var roofGroup = new THREE.Group();
+  roofGroup.add(roofMesh);
+  roofGroup.add(chimneyMesh);
+
+  var houseGroup = new THREE.Group();
+  houseGroup.add(roofGroup);
+  houseGroup.add(houseMesh);
+  houseGroup.add(doorsMesh);
+  houseGroup.add(windowLeftMesh);
+  houseGroup.add(windowRightMesh);
+  houseGroup.position.set(0, 0, 0);
+
+  return houseGroup;
 }
 
 function initializeScene() {
   renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setClearColor(0x000000, 1);
+  renderer.setClearColor(0x34b7eb, 1);
 
   canvasWidth = window.innerWidth;
   canvasHeight = window.innerHeight;
@@ -117,11 +198,17 @@ function initializeScene() {
   camera.lookAt(scene.position);
   scene.add(camera);
 
-  // Christmass Tree
-  buildChristmassTree();
+  // Christmass Trees
+  var treesGroup = new THREE.Group();
+  treesGroup.add(buildChristmassTree(-2, 0, 0, 0x00fc00, 0x964b00));
+  treesGroup.add(buildChristmassTree(-4.3, 0, 1, 0x00fc00, 0x964a00));
+  treesGroup.add(buildChristmassTree(-0.7, 1.5, -0.1, 0x3c5700, 0x964a00));
+  treesGroup.add(buildChristmassTree(-3.5, 1.5, -0.1, 0x3c5700, 0x964a00));
+  treesGroup.position.set(0, 0, -2);
+  scene.add(treesGroup);
 
   // Gregory House
-  buildGregoryHouse();
+  scene.add(buildGregoryHouse());
 }
 
 function renderScene() {
