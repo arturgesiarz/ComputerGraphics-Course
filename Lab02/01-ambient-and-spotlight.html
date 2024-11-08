@@ -47,8 +47,26 @@
 
       ctr = new THREE.OrbitControls(camera, renderer.domElement);
 
+      // create special mesh
+      var phongMaterial = new THREE.MeshPhongMaterial({ color: 0xff0000 });
+      phongMaterial.specular = new THREE.Color(0x2f2f21);
+      phongMaterial.shininess = 60;
+
+      // full-opacity
+      let cylinderGeometry = new THREE.CylinderGeometry(0, 10, 10, 20);
+      let cylinderMaterial = new THREE.MeshLambertMaterial({
+        opacity: 0.2,
+        color: 0x44ff44,
+        transparent: true,
+      });
+      var opacityCylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
+      opacityCylinder.position.x = 15;
+      opacityCylinder.position.y = 0;
+      opacityCylinder.position.z = 0;
+      scene.add(opacityCylinder);
+
       // create the ground plane
-      var planeGeometry = new THREE.PlaneGeometry(60, 20, 20, 20);
+      var planeGeometry = new THREE.PlaneGeometry(80, 20, 20, 20);
       var planeMaterial = new THREE.MeshLambertMaterial({
         color: 0xffffff,
         side: THREE.DoubleSide,
@@ -68,7 +86,7 @@
       // create a cube
       var cubeGeometry = new THREE.CubeGeometry(4, 4, 4);
       var cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 });
-      var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+      var cube = new THREE.Mesh(cubeGeometry, phongMaterial);
       cube.castShadow = true;
 
       // position the cube
@@ -85,10 +103,10 @@
         specular: true,
         shininess: 100,
       });
-      var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+      var sphere = new THREE.Mesh(sphereGeometry, phongMaterial);
 
       // position the sphere
-      sphere.position.x = 20;
+      sphere.position.x = -20;
       sphere.position.y = 0;
       sphere.position.z = 2;
       sphere.castShadow = true;
@@ -108,41 +126,56 @@
       scene.add(ambientLight);
 
       // Spotlight for Plane
-      //   var spotLightPlane = new THREE.SpotLight(0xfff4ff);
-      //   spotLightPlane.position.set(0, 50, -10);
-      //   spotLightPlane.castShadow = true;
+      // var spotLightPlane = new THREE.SpotLight(0xfff4ff);
+      // spotLightPlane.position.set(0, 50, -10);
+      // spotLightPlane.castShadow = true;
 
-      //   spotLightPlane.penumbra = 0.7;
-      //   scene.add(spotLightPlane);
+      // spotLightPlane.penumbra = 0.7;
+      // scene.add(spotLightPlane);
 
       // DO 11 LISTOPADA!!!
 
       // Spotligh for Sphere
       var spotLightSphere = new THREE.SpotLight(0xffffff);
-      spotLightSphere.position.set(-40, 50, -10);
+      spotLightSphere.position.set(-20, 50, -10);
       spotLightSphere.castShadow = true;
-      spotLightSphere.angle = 0.1;
+      spotLightSphere.angle = 0.23;
       spotLightSphere.penumbra = 0.7;
       spotLightSphere.target = sphere;
+
+      // shadows
+      spotLightSphere.shadow.mapSize.width = 2000;
+      spotLightSphere.shadow.mapSize.height = 2048;
+      spotLightSphere.shadow.camera.near = 50;
+      spotLightSphere.shadow.camera.far = 200;
+      spotLightSphere.shadow.camera.fov = 20;
+
       scene.add(spotLightSphere);
 
       // Spotligh for Cube
       var spotLightCube = new THREE.SpotLight(0xffffff);
-      spotLightCube.position.set(-40, 60, -10);
+      spotLightCube.position.set(10, 60, 10);
       spotLightCube.castShadow = true;
-      spotLightCube.angle = 0.1;
+      spotLightCube.angle = 0.2;
       spotLightCube.penumbra = 0.7;
       spotLightCube.target = cube;
+
+      // shadows
+      spotLightCube.shadow.mapSize.width = 2000;
+      spotLightCube.shadow.mapSize.height = 3048;
+      spotLightCube.shadow.camera.near = 15;
+      spotLightCube.shadow.camera.far = 300;
+      spotLightCube.shadow.camera.fov = 20;
       scene.add(spotLightCube);
 
       // camera options
-      var helper = new THREE.CameraHelper(spotLightSphere.shadow.camera);
-      scene.add(helper);
-      spotLightSphere.shadow.camera.near = 0.1;
-      spotLightSphere.shadow.camera.far = 100;
-      spotLightSphere.shadow.camera.fov = 60;
-      spotLightSphere.shadow.mapSize.width = 2048;
-      spotLightSphere.shadow.mapSize.height = 2048;
+      // var helper = new THREE.CameraHelper(spotLightSphere.shadow.camera);
+      // scene.add(helper);
+      // spotLightSphere.shadow.camera.near = 0.1;
+      // spotLightSphere.shadow.camera.far = 100;
+      // spotLightSphere.shadow.camera.fov = 60;
+      // spotLightSphere.shadow.mapSize.width = 2048;
+      // spotLightSphere.shadow.mapSize.height = 2048;
 
       // add the output of the renderer to the html element
       $("#WebGL-output").append(renderer.domElement);
@@ -172,7 +205,7 @@
 
         // bounce the sphere up and down
         step += controls.bouncingSpeed;
-        sphere.position.x = 20 + 10 * Math.cos(step);
+        sphere.position.x = 25 + 10 * Math.cos(step);
         sphere.position.y = 2 + 10 * Math.abs(Math.sin(step));
 
         // render using requestAnimationFrame
