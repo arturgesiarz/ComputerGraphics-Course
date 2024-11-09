@@ -40,7 +40,7 @@
       var renderer = new THREE.WebGLRenderer();
 
       var initializeScene = () => {
-        renderer.setClearColor(new THREE.Color(0xeeeeee)); //background color and opacity
+        renderer.setClearColor(new THREE.Color(0x000000)); //background color and opacity
 
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMap.enabled = true; // false is default
@@ -52,22 +52,14 @@
         plane = createGroundPlane(
           100,
           100,
-          0xffffff,
+          0xfffff,
           new THREE.Vector3(15, 0, 0),
           new THREE.Vector3(-0.5 * Math.PI, 0, 0)
         );
 
-        cube1 = createCube(10, 10, 10, 0xff0000, new THREE.Vector3(50, 10, 0));
+        cube1 = createCube(10, 10, 10, 0x00ff00, new THREE.Vector3(10, 10, 20));
 
         cube2 = createCube(
-          10,
-          10,
-          10,
-          0x00ff00,
-          new THREE.Vector3(-10, 10, 20)
-        );
-
-        cube3 = createCube(
           10,
           10,
           10,
@@ -88,21 +80,13 @@
           32,
           16,
           0x682bb3,
-          new THREE.Vector3(20, 0, 0)
-        );
-
-        sphere3 = createSphere(
-          4,
-          32,
-          16,
-          0x120c0c,
           new THREE.Vector3(0, 0, -20)
         );
       };
 
-      var createGroundPlane = (w, h, color, position, rotation) => {
+      var createGroundPlane = (width, height, color, position, rotation) => {
         // create the ground plane
-        var planeGeometry = new THREE.PlaneGeometry(w, h);
+        var planeGeometry = new THREE.PlaneGeometry(width, height);
 
         var planeMaterial = new THREE.MeshPhongMaterial({
           color: color,
@@ -122,9 +106,9 @@
         return plane;
       };
 
-      var createCube = (w, h, d, color, position) => {
+      var createCube = (width, height, depth, color, position) => {
         // create a cube
-        var cubeGeometry = new THREE.CubeGeometry(w, h, d);
+        var cubeGeometry = new THREE.CubeGeometry(width, height, depth);
 
         var cubeMaterial = new THREE.MeshPhongMaterial({
           color: color,
@@ -229,10 +213,8 @@
       var plane;
       var cube1;
       var cube2;
-      var cube3;
       var sphere1;
       var sphere2;
-      var sphere3;
       var cone;
 
       initializeScene();
@@ -250,19 +232,19 @@
 
       // add spotlight for the shadows
       var spotLight1 = addSpotLight(
-        0xffffff,
-        3,
+        0xd703fc,
+        2,
         200,
         0.35,
         0.25,
         1,
-        new THREE.Vector3(-40, 60, -10),
+        new THREE.Vector3(-50, 60, -10),
         sphere2
       );
 
       var spotLight2 = addSpotLight(
         0xff0000,
-        1,
+        2,
         200,
         0.35,
         0.25,
@@ -272,21 +254,18 @@
       );
 
       var spotLight3 = addSpotLight(
-        0x0000ff,
-        1,
+        0x03fcd3,
+        5,
         200,
         0.35,
         0.25,
         1,
         new THREE.Vector3(-50, 60, -50),
-        sphere3
+        cube1
       );
 
       cone = createCone(70, 200, 100, new THREE.Vector3(0, 0, 0));
       cone.geometry.rotateX(-Math.PI / 2);
-
-      var axis = new THREE.AxesHelper(20);
-      cone.add(axis);
 
       // add the output of the renderer to the html element
       $("#WebGL-output").append(renderer.domElement);
@@ -315,27 +294,24 @@
         cube1.rotation.x += controls.rotationSpeed;
         cube1.rotation.y += controls.rotationSpeed;
         cube1.rotation.z += controls.rotationSpeed;
+
         cube2.rotation.x += controls.rotationSpeed;
         cube2.rotation.y += controls.rotationSpeed;
         cube2.rotation.z += controls.rotationSpeed;
-        cube3.rotation.x += controls.rotationSpeed;
-        cube3.rotation.y += controls.rotationSpeed;
-        cube3.rotation.z += controls.rotationSpeed;
 
         // bounce the sphere up and down
         step += controls.bouncingSpeed;
-        sphere1.position.x = 20 + 10 * Math.cos(step);
-        sphere1.position.y = 2 + 10 * Math.abs(Math.sin(step));
+        sphere1.position.x = 10 + 30 * Math.cos(step);
+        sphere1.position.y = 2 + 40 * Math.abs(Math.sin(step));
+
         sphere2.position.x = 20 + 10 * Math.cos(step);
         sphere2.position.y = 2 + 10 * Math.abs(Math.sin(step));
-        sphere3.position.x = 20 + 10 * Math.cos(step);
-        sphere3.position.y = 2 + 10 * Math.abs(Math.sin(step));
 
         angle += 0.01;
-        spotLight1.position.x = Math.sin(angle) * 80;
-        spotLight1.position.z = Math.cos(angle) * 80;
+        spotLight3.position.x = Math.sin(angle) * 80;
+        spotLight3.position.z = Math.cos(angle) * 80;
 
-        updateCone(cone, spotLight1, sphere2);
+        updateCone(cone, spotLight3, cube2);
 
         // render using requestAnimationFrame
         requestAnimationFrame(render);
