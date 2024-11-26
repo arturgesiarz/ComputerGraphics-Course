@@ -53,8 +53,10 @@
       // custom global variables
       var mirrorTorus, mirrorToursCamera; // for mirror material
       var mirrorCube, mirrorCubeCamera; // for mirror material
+
       var mirrorSpheres = [];
       var mirrorSphereCameras = [];
+
       var cubes;
 
       // global angle variables
@@ -65,7 +67,7 @@
       animate();
 
       // FUNCTIONS
-      function createMesh(geom, imageFile, opactiy = 1) {
+      function createMesh(geom, imageFile, opacity = 1) {
         var texture = new THREE.TextureLoader().load("textures/" + imageFile);
         texture.repeat.set(1, 1);
 
@@ -83,6 +85,7 @@
         mat.map = texture;
 
         var mesh = new THREE.Mesh(geom, mat);
+        return mesh;
       }
 
       function init() {
@@ -235,9 +238,10 @@
         var mirrorToursMaterial = new THREE.MeshBasicMaterial({
           envMap: mirrorToursCamera.renderTarget,
         });
+
         mirrorTorus = new THREE.Mesh(torusGeom, mirrorToursMaterial);
         mirrorTorus.rotation.x -= Math.PI / 2;
-        mirrorTorus.position.set(0, 200, 350);
+        mirrorTorus.position.set(0, 100, 350);
         mirrorToursCamera.position.copy(mirrorTorus.position);
         scene.add(mirrorTorus);
 
@@ -253,27 +257,6 @@
         mirrorCube.position.set(0, 120, 0);
         mirrorCubeCamera.position.copy(mirrorCube.position);
         scene.add(mirrorCube);
-
-        var sphere_pos_x = [400, 400, -400, -400];
-        var sphere_pos_z = [400, -400, 400, -400];
-
-        for (let i = 0; i < 4; i++) {
-          var sphereGeom = new THREE.SphereGeometry(60, 32, 16);
-          var mirrorSphereCamera = new THREE.CubeCamera(0.1, 5000, 512);
-          scene.add(mirrorSphereCamera);
-
-          var mirrorSphereMaterial = new THREE.MeshBasicMaterial({
-            envMap: mirrorSphereCamera.renderTarget,
-          });
-
-          var mirrorSphere = new THREE.Mesh(sphereGeom, mirrorSphereMaterial);
-          mirrorSphere.position.set(sphere_pos_x[i], 30, sphere_pos_z[i]);
-          mirrorSphereCamera.position.copy(mirrorSphere.position);
-          scene.add(mirrorSphere);
-
-          mirrorSpheres.push(mirrorSphere);
-          mirrorSphereCameras.push(mirrorSphereCamera);
-        }
       }
 
       function animate() {
@@ -298,19 +281,29 @@
         // need to hide surface before and after so that it does not
         //    "get in the way" of the camera
 
+        alpha += 0.01;
+        beta += 0.1;
+
+        mirrorTorus.visible = false;
+        mirrorTorus.rotation.x += 0.03;
+        mirrorTorus.rotation.y += 0.03;
+        mirrorTorus.rotation.z += 0.03;
+        mirrorTorus.position.y = 350 * Math.sin(alpha);
+        mirrorTorus.position.z = 450 * Math.cos(alpha);
+        mirrorToursCamera.update(renderer, scene);
+        mirrorTorus.visible = true;
+
         mirrorCube.visible = false;
-        mirrorCubeCamera.updateCubeMap(renderer, scene);
+        mirrorCube.rotation.x += 0.01;
+        mirrorCubeCamera.update(renderer, scene);
         mirrorCube.visible = true;
 
-        mirrorSphere.visible = false;
-        mirrorSphereCamera.updateCubeMap(renderer, scene);
-        mirrorSphere.visible = true;
+        for (let i = 0; i < 4; i++) {
+          cubes[i].rotation.y += 0.02;
+          cubes[i].rotation.x += 0.02;
 
-        //torus.visible = false;
-        //mirrorTorusCamera.updateCubeMap( renderer, scene );
-        //torus.visible = true;
-
-        renderer.render(scene, camera);
+          renderer.render(scene, camera);
+        }
       }
     </script>
   </body>
