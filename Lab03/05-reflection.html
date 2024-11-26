@@ -51,8 +51,8 @@
       var clock = new THREE.Clock();
 
       // custom global variables
+      var mirrorTorus, mirrorToursCamera; // for mirror material
       var mirrorCube, mirrorCubeCamera; // for mirror material
-      var mirrorSphere, mirrorSphereCamera; // for mirror material
       var mirrorSpheres = [];
       var mirrorSphereCameras = [];
       var cubes;
@@ -195,31 +195,85 @@
         // CUSTOM //
         ////////////
 
-        var cubeGeom = new THREE.CubeGeometry(200, 200, 30, 1, 1, 1);
-        mirrorCubeCamera = new THREE.CubeCamera(0.1, 5000, 512);
+        var cube1 = createMesh(
+          new THREE.CubeGeometry(80, 80, 80),
+          "brick-wall.jpg",
+          0.7
+        );
+        cube1.position.set(180, 40, 180);
+        scene.add(cube1);
+
+        var cube2 = createMesh(
+          new THREE.CubeGeometry(80, 80, 80),
+          "floor-wood.jpg",
+          0.7
+        );
+        cube2.position.set(180, 40, -180);
+        scene.add(cube2);
+
+        var cube3 = createMesh(
+          new THREE.CubeGeometry(80, 80, 80),
+          "floor-wood.jpg",
+          0.7
+        );
+        cube3.position.set(-180, 40, 180);
+        scene.add(cube3);
+
+        var cube4 = createMesh(
+          new THREE.CubeGeometry(80, 80, 80),
+          "brick-wall.jpg"
+        );
+        cube4.position.set(-180, 40, -180);
+        scene.add(cube4);
+
+        cubes = [cube1, cube2, cube3, cube4];
+
+        var torusGeom = new THREE.TorusGeometry(60, 30, 30, 200);
+        mirrorToursCamera = new THREE.CubeCamera(0.1, 5000, 512);
+        scene.add(mirrorToursCamera);
+
+        var mirrorToursMaterial = new THREE.MeshBasicMaterial({
+          envMap: mirrorToursCamera.renderTarget,
+        });
+        mirrorTorus = new THREE.Mesh(torusGeom, mirrorToursMaterial);
+        mirrorTorus.rotation.x -= Math.PI / 2;
+        mirrorTorus.position.set(0, 200, 350);
+        mirrorToursCamera.position.copy(mirrorTorus.position);
+        scene.add(mirrorTorus);
+
+        var cubeGeom = new THREE.CubeGeometry(200, 200, 30, 20, 20, 20);
+        mirrorCubeCamera = new THREE.CubeCamera(0.1, 5000, 2048);
         // mirrorCubeCamera.renderTarget.minFilter = THREE.LinearMipMapLinearFilter;
         scene.add(mirrorCubeCamera);
+
         var mirrorCubeMaterial = new THREE.MeshBasicMaterial({
           envMap: mirrorCubeCamera.renderTarget,
         });
         mirrorCube = new THREE.Mesh(cubeGeom, mirrorCubeMaterial);
-        mirrorCube.position.set(-75, 50, 0);
-        //mirrorCubeCamera.position = mirrorCube.position;    not working with new three.js
-        mirrorCubeCamera.position.set(-75, 50, 0);
+        mirrorCube.position.set(0, 120, 0);
+        mirrorCubeCamera.position.copy(mirrorCube.position);
         scene.add(mirrorCube);
 
-        var sphereGeom = new THREE.SphereGeometry(50, 32, 16); // radius, segmentsWidth, segmentsHeight
-        mirrorSphereCamera = new THREE.CubeCamera(0.1, 5000, 512);
-        // mirrorCubeCamera.renderTarget.minFilter = THREE.LinearMipMapLinearFilter;
-        scene.add(mirrorSphereCamera);
-        var mirrorSphereMaterial = new THREE.MeshBasicMaterial({
-          envMap: mirrorSphereCamera.renderTarget,
-        });
-        mirrorSphere = new THREE.Mesh(sphereGeom, mirrorSphereMaterial);
-        mirrorSphere.position.set(75, 50, 0);
-        //mirrorSphereCamera.position = mirrorSphere.position;
-        mirrorSphereCamera.position.set(75, 50, 0);
-        scene.add(mirrorSphere);
+        var sphere_pos_x = [400, 400, -400, -400];
+        var sphere_pos_z = [400, -400, 400, -400];
+
+        for (let i = 0; i < 4; i++) {
+          var sphereGeom = new THREE.SphereGeometry(60, 32, 16);
+          var mirrorSphereCamera = new THREE.CubeCamera(0.1, 5000, 512);
+          scene.add(mirrorSphereCamera);
+
+          var mirrorSphereMaterial = new THREE.MeshBasicMaterial({
+            envMap: mirrorSphereCamera.renderTarget,
+          });
+
+          var mirrorSphere = new THREE.Mesh(sphereGeom, mirrorSphereMaterial);
+          mirrorSphere.position.set(sphere_pos_x[i], 30, sphere_pos_z[i]);
+          mirrorSphereCamera.position.copy(mirrorSphere.position);
+          scene.add(mirrorSphere);
+
+          mirrorSpheres.push(mirrorSphere);
+          mirrorSphereCameras.push(mirrorSphereCamera);
+        }
       }
 
       function animate() {
