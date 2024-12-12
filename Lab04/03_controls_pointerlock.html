@@ -306,7 +306,7 @@
         }
 
         // gun
-        var gunTexture = new THREE.TextureLoader().load("textures/ssg_gun.png");
+        var gunTexture = new THREE.TextureLoader().load("ssg_gun.png");
         var gunGeometry = new THREE.PlaneGeometry(3, 3);
         var gunMaterial = new THREE.MeshBasicMaterial({
           map: gunTexture,
@@ -320,9 +320,7 @@
         camera.add(gun);
 
         // crosshair
-        var crosshairTexture = new THREE.TextureLoader().load(
-          "textures/crosshair.png"
-        );
+        var crosshairTexture = new THREE.TextureLoader().load("crosshair.png");
         var crosshairGeometry = new THREE.PlaneGeometry(1, 1);
         var crosshairMaterial = new THREE.MeshBasicMaterial({
           map: crosshairTexture,
@@ -334,7 +332,7 @@
         camera.add(crosshair);
 
         // skybox
-        var imagePrefix = "textures/cracow-";
+        var imagePrefix = "cracow-";
         var directions = ["xpos", "xneg", "ypos", "yneg", "zpos", "zneg"];
         var imageSuffix = ".png";
 
