@@ -202,17 +202,17 @@
           75,
           window.innerWidth / window.innerHeight,
           1,
-          1000
+          50000
         );
 
         scene = new THREE.Scene();
-        scene.fog = new THREE.Fog(0xffffff, 0, 750);
+        scene.fog = new THREE.Fog(0xffffff, 0, 200000);
 
-        var light = new THREE.DirectionalLight(0xffffff, 1.5);
+        var light = new THREE.DirectionalLight(0xfffff5, 1.5);
         light.position.set(1, 1, 1);
         scene.add(light);
 
-        var light = new THREE.DirectionalLight(0xffffff, 0.75);
+        var light = new THREE.DirectionalLight(0xaa55aa, 0.75);
         light.position.set(-1, -0.5, -1);
         scene.add(light);
 
@@ -262,7 +262,7 @@
 
         // objects
 
-        geometry = new THREE.BoxGeometry(20, 20, 20);
+        geometry = new THREE.BoxGeometry(30, 30, 30);
 
         for (var i = 0, l = geometry.faces.length; i < l; i++) {
           var face = geometry.faces[i];
@@ -283,7 +283,7 @@
           );
         }
 
-        for (var i = 0; i < 500; i++) {
+        for (var i = 0; i < 750; i++) {
           material = new THREE.MeshPhongMaterial({
             specular: 0xffffff,
             shading: THREE.FlatShading,
@@ -291,9 +291,9 @@
           });
 
           var mesh = new THREE.Mesh(geometry, material);
-          mesh.position.x = Math.floor(Math.random() * 20 - 10) * 20;
-          mesh.position.y = Math.floor(Math.random() * 20) * 20 + 10;
-          mesh.position.z = Math.floor(Math.random() * 20 - 10) * 20;
+          mesh.position.x = Math.floor(Math.random() * 30 - 15) * 20;
+          mesh.position.y = Math.floor(Math.random() * 30) * 50 + 15;
+          mesh.position.z = Math.floor(Math.random() * 30 - 15) * 100;
           scene.add(mesh);
 
           material.color.setHSL(
@@ -306,7 +306,7 @@
         }
 
         // gun
-        var gunTexture = new THREE.TextureLoader().load("ssg_gun.png");
+        var gunTexture = new THREE.TextureLoader().load("textures/ssg_gun.png");
         var gunGeometry = new THREE.PlaneGeometry(3, 3);
         var gunMaterial = new THREE.MeshBasicMaterial({
           map: gunTexture,
@@ -320,7 +320,9 @@
         camera.add(gun);
 
         // crosshair
-        var crosshairTexture = new THREE.TextureLoader().load("crosshair.png");
+        var crosshairTexture = new THREE.TextureLoader().load(
+          "textures/crosshair.png"
+        );
         var crosshairGeometry = new THREE.PlaneGeometry(1, 1);
         var crosshairMaterial = new THREE.MeshBasicMaterial({
           map: crosshairTexture,
@@ -331,13 +333,43 @@
         crosshair.position.z = -10;
         camera.add(crosshair);
 
+        // skybox
+        var imagePrefix = "textures/cracow-";
+        var directions = ["xpos", "xneg", "ypos", "yneg", "zpos", "zneg"];
+        var imageSuffix = ".png";
+
+        var materialArray = [];
+
+        for (var i = 0; i < 6; i++) {
+          materialArray.push(
+            new THREE.MeshBasicMaterial({
+              map: THREE.ImageUtils.loadTexture(
+                imagePrefix + directions[i] + imageSuffix
+              ),
+              side: THREE.BackSide,
+            })
+          );
+        }
+
+        var skyGeometry = new THREE.BoxGeometry(
+          50000,
+          50000,
+          50000,
+          64,
+          64,
+          64
+        );
+        var skyMaterial = new THREE.MeshFaceMaterial(materialArray);
+        var skyBox = new THREE.Mesh(skyGeometry, skyMaterial);
+
+        scene.add(skyBox);
+
+        // render
         renderer = new THREE.WebGLRenderer();
         renderer.setClearColor(0xffffff);
         renderer.setSize(window.innerWidth, window.innerHeight);
 
         document.body.appendChild(renderer.domElement);
-
-        //
 
         window.addEventListener("resize", onWindowResize, false);
       }
@@ -351,8 +383,6 @@
 
       function animate() {
         requestAnimationFrame(animate);
-
-        //
 
         controls.isOnObject(false);
 
