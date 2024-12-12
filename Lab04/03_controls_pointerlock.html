@@ -305,21 +305,31 @@
           objects.push(mesh);
         }
 
-        var maskTexture = new THREE.TextureLoader().load("maska.png");
-        var maskGeometry = new THREE.PlaneGeometry(5, 5);
-        var maskMaterial = new THREE.MeshBasicMaterial({
-          map: maskTexture,
+        // gun
+        var gunTexture = new THREE.TextureLoader().load("ssg_gun.png");
+        var gunGeometry = new THREE.PlaneGeometry(3, 3);
+        var gunMaterial = new THREE.MeshBasicMaterial({
+          map: gunTexture,
           transparent: true,
         });
-        var mask = new THREE.Mesh(maskGeometry, maskMaterial);
+        var gun = new THREE.Mesh(gunGeometry, gunMaterial);
 
-        mask.position.x = 0;
-        mask.position.y = 1;
-        mask.position.z = -1.3;
-        //scene.add(myBox);
-        // camera.add(mask);
+        gun.position.x = 1.5;
+        gun.position.y = -0.8;
+        gun.position.z = -3;
+        camera.add(gun);
 
-        //
+        // crosshair
+        var crosshairTexture = new THREE.TextureLoader().load("crosshair.png");
+        var crosshairGeometry = new THREE.PlaneGeometry(1, 1);
+        var crosshairMaterial = new THREE.MeshBasicMaterial({
+          map: crosshairTexture,
+          transparent: true,
+        });
+        var crosshair = new THREE.Mesh(crosshairGeometry, crosshairMaterial);
+
+        crosshair.position.z = -10;
+        camera.add(crosshair);
 
         renderer = new THREE.WebGLRenderer();
         renderer.setClearColor(0xffffff);
