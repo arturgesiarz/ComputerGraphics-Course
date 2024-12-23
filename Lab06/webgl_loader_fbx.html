@@ -31,10 +31,139 @@
 
       var clock = new THREE.Clock();
 
-      var mixer;
+      var mixers = [];
 
       init();
       animate();
+
+      function loadCreatures() {
+        var loader = new THREE.FBXLoader();
+
+        var zoombies_positions = [
+          [80, 100],
+          [-80, 170],
+        ];
+
+        // zoombies
+        zoombies_positions.forEach((zoombie_pos) => {
+          loader.load("models/fbx/Reaction.fbx", function (object) {
+            var mixer = new THREE.AnimationMixer(object);
+
+            var action = mixer.clipAction(object.animations[0]);
+            action.play();
+
+            object.position.x = zoombie_pos[0];
+            object.position.z = zoombie_pos[1];
+            object.rotation.y += Math.PI;
+
+            object.traverse(function (child) {
+              if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+              }
+            });
+
+            mixers.push(mixer);
+            scene.add(object);
+          });
+        });
+
+        // fighter - doctor
+        loader.load("models/fbx/Martelo 2.fbx", function (object) {
+          var mixer = new THREE.AnimationMixer(object);
+
+          var action = mixer.clipAction(object.animations[0]);
+          action.play();
+
+          object.position.x = 80;
+          object.position.z = -80;
+
+          object.traverse(function (child) {
+            if (child.isMesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+            }
+          });
+
+          mixers.push(mixer);
+          scene.add(object);
+        });
+
+        // fighter Vi
+        loader.load(
+          "models/fbx/Great Sword Jump Attack.fbx",
+          function (object) {
+            var mixer = new THREE.AnimationMixer(object);
+
+            var action = mixer.clipAction(object.animations[0]);
+            action.setLoop(THREE.LoopOnce);
+            action.clampWhenFinished = true;
+            action.play();
+
+            let isReversed = false;
+
+            mixer.addEventListener("finished", function () {
+              isReversed = !isReversed;
+              action.timeScale = isReversed ? -1 : 1;
+              action.paused = false;
+              action.play();
+            });
+
+            object.position.x = -80;
+            object.position.z = -250;
+
+            object.traverse(function (child) {
+              if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+              }
+            });
+
+            mixers.push(mixer);
+            scene.add(object);
+          }
+        );
+
+        // dancers
+        var dancers = 10;
+        var radius = 400;
+        var dancers_positions = [];
+
+        for (var i = 0; i < dancers; i++) {
+          var dancer_position = [-1, -1, -1];
+          var angle = ((2 * Math.PI) / dancers) * i;
+
+          dancer_position[0] = radius * Math.cos(angle);
+          dancer_position[1] = 0;
+          dancer_position[2] = radius * Math.sin(angle);
+
+          dancers_positions.push(dancer_position);
+        }
+
+        dancers_positions.forEach((dancer_position) => {
+          loader.load("models/fbx/Bboy Hip Hop Move.fbx", function (object) {
+            var mixer = new THREE.AnimationMixer(object);
+
+            var action = mixer.clipAction(object.animations[0]);
+            action.play();
+
+            object.position.x = dancer_position[0];
+            object.position.z = dancer_position[2];
+            object.rotation.y += Math.PI;
+            object.lookAt(0, 0, 0);
+
+            object.traverse(function (child) {
+              if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+              }
+            });
+
+            mixers.push(mixer);
+            scene.add(object);
+          });
+        });
+      }
 
       function init() {
         container = document.createElement("div");
@@ -50,7 +179,7 @@
 
         scene = new THREE.Scene();
         scene.background = new THREE.Color(0xa0a0a0);
-        scene.fog = new THREE.Fog(0xa0a0a0, 200, 1000);
+        scene.fog = new THREE.Fog(0xa0a0a0, 800, 1000);
 
         light = new THREE.HemisphereLight(0xffffff, 0x444444);
         light.position.set(0, 200, 0);
@@ -81,23 +210,8 @@
         grid.material.transparent = true;
         scene.add(grid);
 
-        // model
-        var loader = new THREE.FBXLoader();
-        loader.load("models/fbx/Samba Dancing.fbx", function (object) {
-          mixer = new THREE.AnimationMixer(object);
-
-          var action = mixer.clipAction(object.animations[0]);
-          action.play();
-
-          object.traverse(function (child) {
-            if (child.isMesh) {
-              child.castShadow = true;
-              child.receiveShadow = true;
-            }
-          });
-
-          scene.add(object);
-        });
+        // load models
+        loadCreatures();
 
         renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setPixelRatio(window.devicePixelRatio);
@@ -123,14 +237,14 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
       }
 
-      //
-
       function animate() {
         requestAnimationFrame(animate);
 
         var delta = clock.getDelta();
 
-        if (mixer) mixer.update(delta);
+        mixers.forEach((mixer) => {
+          mixer.update(delta);
+        });
 
         renderer.render(scene, camera);
 
